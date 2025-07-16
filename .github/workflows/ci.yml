@@ -76,5 +76,5 @@ jobs:
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:
-        name: mcp-hello-world
-        path: mcp-hello-world
+        name: mcp-bins
+        path: mcp-bins

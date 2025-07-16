@@ -1,4 +1,4 @@
-module mcp-hello-world
+module mcp-bins
 
 go 1.24.5
 

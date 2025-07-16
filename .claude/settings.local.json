@@ -8,7 +8,8 @@
       "Bash(gofmt:*)",
       "Bash(.git/hooks/pre-commit)",
       "Bash(pre-commit:*)",
-      "Bash(./mcp-hello-world -h)"
+      "Bash(./mcp-hello-world -h)",
+      "Bash(./mcp-bins -h)"
     ],
     "deny": []
   }

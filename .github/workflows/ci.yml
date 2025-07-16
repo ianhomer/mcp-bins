@@ -71,10 +71,10 @@ jobs:
       run: go mod download
 
     - name: Build
-      run: go build -v -o hello-world-server
+      run: go build -v
 
     - name: Upload build artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: hello-world-server
-        path: hello-world-server
+        name: mcp-hello-world
+        path: mcp-hello-world

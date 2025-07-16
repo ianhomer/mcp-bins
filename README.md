@@ -1,10 +1,11 @@
-# Hello World MCP Server
+# MCP Bins Server
 
-A simple Model Context Protocol (MCP) server written in Go using the [mcp-go](https://github.com/mark3labs/mcp-go) library.
+A Model Context Protocol (MCP) server written in Go using the [mcp-go](https://github.com/mark3labs/mcp-go) library.
 
 ## Features
 
 - **Hello Tool**: Says hello to the world or a specific name
+- **Bin Collection Tool**: Get bin collection dates for Reading addresses using UPRN
 - **Hello Resource**: A simple text resource accessible at `hello://world`
 
 ## Development Setup
@@ -29,7 +30,7 @@ The pre-commit hooks will automatically run before each commit and include:
 ## Building
 
 ```bash
-go build -o hello-world-server
+go build
 ```
 
 ## Testing
@@ -51,7 +52,13 @@ The tests cover:
 The server communicates via stdio transport:
 
 ```bash
-./hello-world-server
+./mcp-hello-world
+```
+
+You can optionally set a default UPRN for bin collection queries:
+
+```bash
+./mcp-hello-world -uprn 310045409
 ```
 
 ### Claude Desktop Integration
@@ -60,7 +67,7 @@ To use this MCP server with Claude Desktop:
 
 1. Build the server:
    ```bash
-   go build -o hello-world-server
+   go build
    ```
 
 2. Add the server to your Claude Desktop configuration. On macOS, edit:
@@ -73,8 +80,20 @@ To use this MCP server with Claude Desktop:
    {
      "mcpServers": {
        "hello-world": {
-         "command": "/path/to/your/project/hello-world-server",
+         "command": "/path/to/your/project/mcp-hello-world",
          "args": []
+       }
+     }
+   }
+   ```
+
+   Or with a default UPRN:
+   ```json
+   {
+     "mcpServers": {
+       "hello-world": {
+         "command": "/path/to/your/project/mcp-hello-world",
+         "args": ["-uprn", "310045409"]
        }
      }
    }
@@ -84,7 +103,9 @@ To use this MCP server with Claude Desktop:
 
 5. Restart Claude Desktop
 
-6. You can now use the hello tool and access the hello://world resource in your conversations with Claude
+6. You can now use the hello tool, bin-collection tool, and access the hello://world resource in your conversations with Claude
+
+**Note**: The bin-collection tool requires a valid UPRN (Unique Property Reference Number) for Reading addresses. You can find your UPRN on council tax bills or by searching the Reading Borough Council website.
 
 ## Tools
 
@@ -92,6 +113,13 @@ To use this MCP server with Claude Desktop:
 - **Description**: Says hello to the world or a specific name
 - **Arguments**:
   - `name` (optional string): Name to greet
+
+### bin-collection
+- **Description**: Get bin collection dates for a Reading address using UPRN
+- **Arguments**:
+  - `uprn` (optional string): Unique Property Reference Number for the address
+  - If no UPRN is provided, uses the default UPRN set at server startup
+- **Example**: `bin-collection uprn=310045409`
 
 ## Resources
 

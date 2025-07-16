@@ -4,7 +4,8 @@ A Model Context Protocol (MCP) server written in Go using the [mcp-go](https://g
 
 ## Features
 
-- **Bin Collection Tool**: Get bin collection dates for Reading addresses using UPRN
+- **Bin Collection Tool**: Get bin collection dates for Reading Borough Council addresses using UPRN
+- **Read-only**: Currently only supports reading collection schedules (no modifications)
 
 ## Development Setup
 
@@ -56,7 +57,8 @@ The server communicates via stdio transport:
 ./mcp-bins
 ```
 
-You can optionally set a default UPRN for bin collection queries:
+You MUST set the default UPRN for bin collection queries. You can get it from
+`curl https://api.reading.gov.uk/rbc/getaddresses/{postcode}`
 
 ```bash
 ./mcp-bins -uprn 000000000
@@ -110,17 +112,18 @@ To use this MCP server with Claude Desktop:
 
 6. You can now use the bin-collection tool in your conversations with Claude
 
-**Note**: The bin-collection tool requires a valid UPRN (Unique Property Reference Number) for Reading addresses. You can find your UPRN on council tax bills or by searching the Reading Borough Council website.
+**Note**: The bin-collection tool requires a valid UPRN (Unique Property Reference Number) for Reading Borough Council addresses. You can find your UPRN on council tax bills or by searching the Reading Borough Council website. This tool provides read-only access to collection schedules.
 
 ## Tools
 
 ### bin-collection
 
-- **Description**: Get bin collection dates for a Reading address using UPRN
+- **Description**: Get bin collection dates for a Reading Borough Council address using UPRN (read-only)
 - **Arguments**:
   - `uprn` (optional string): Unique Property Reference Number for the address
   - If no UPRN is provided, uses the default UPRN set at server startup
-- **Example**: `bin-collection uprn=310045409`
+- **Example**: `bin-collection uprn=000000000`
+- **Note**: This tool only reads collection schedules and cannot modify or update bin collection dates
 
 ## Dependencies
 

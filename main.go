@@ -31,7 +31,7 @@ func main() {
 	// Add a simple resource
 	s.AddResource(
 		mcp.NewResource("hello://world",
-			"Hello World",
+			"Hello World! This is content from the MCP Server resouce",
 			mcp.WithMIMEType("text/plain"),
 		),
 		handleHelloResource,

@@ -47,11 +47,44 @@ The tests cover:
 
 ## Usage
 
+### Standalone
 The server communicates via stdio transport:
 
 ```bash
 ./hello-world-server
 ```
+
+### Claude Desktop Integration
+
+To use this MCP server with Claude Desktop:
+
+1. Build the server:
+   ```bash
+   go build -o hello-world-server
+   ```
+
+2. Add the server to your Claude Desktop configuration. On macOS, edit:
+   ```
+   ~/Library/Application Support/Claude/claude_desktop_config.json
+   ```
+
+3. Add the following configuration:
+   ```json
+   {
+     "mcpServers": {
+       "hello-world": {
+         "command": "/path/to/your/project/hello-world-server",
+         "args": []
+       }
+     }
+   }
+   ```
+
+4. Replace `/path/to/your/project/` with the actual path to your built binary
+
+5. Restart Claude Desktop
+
+6. You can now use the hello tool and access the hello://world resource in your conversations with Claude
 
 ## Tools
 

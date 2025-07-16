@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/mark3labs/mcp-go/mcp"
@@ -59,6 +60,53 @@ type BinCollection struct {
 // BinCollectionResponse represents the API response
 type BinCollectionResponse struct {
 	Collections []BinCollection `json:"Collections"`
+}
+
+// getBinColor returns the color and emoji for a given service type
+func getBinColor(service string) (color string, emoji string) {
+	serviceLower := strings.ToLower(service)
+	switch {
+	case strings.Contains(serviceLower, "household waste") ||
+		strings.Contains(serviceLower, "domestic waste") ||
+		strings.Contains(serviceLower, "general waste") ||
+		strings.Contains(serviceLower, "rubbish"):
+		return "black", "⚫"
+	case strings.Contains(serviceLower, "recycling"):
+		return "red", "🔴"
+	case strings.Contains(serviceLower, "garden"):
+		return "green", "🟢"
+	default:
+		return "unknown", "🗑️"
+	}
+}
+
+// getTimeAlert returns a time-based alert message for today's collections
+func getTimeAlert(collectionDate string) string {
+	return getTimeAlertWithTime(collectionDate, time.Now())
+}
+
+// getTimeAlertWithTime returns a time-based alert message for today's collections with a specific time
+func getTimeAlertWithTime(collectionDate string, now time.Time) string {
+	// Parse the collection date (format: "05/02/2020 00:00:00")
+	collectionTime, err := time.Parse("02/01/2006 15:04:05", collectionDate)
+	if err != nil {
+		return ""
+	}
+
+	// Check if collection is today
+	if collectionTime.Year() == now.Year() &&
+		collectionTime.YearDay() == now.YearDay() {
+
+		currentHour := now.Hour()
+
+		if currentHour >= 7 && currentHour < 9 {
+			return " ⚠️ Collection is soon (around 9AM)!"
+		} else if currentHour >= 9 {
+			return " ⚠️ Collection may have already happened (around 9AM)!"
+		}
+	}
+
+	return ""
 }
 
 // HTTPClient interface for testing
@@ -126,7 +174,9 @@ func handleBinCollectionWithClient(ctx context.Context, request mcp.CallToolRequ
 	result = fmt.Sprintf("Upcoming bin collections for UPRN %s:\n\n", uprnStr)
 
 	for _, collection := range binData.Collections {
-		result += fmt.Sprintf("📅 %s (%s)\n   🗑️ %s\n\n", collection.Date, collection.Day, collection.Service)
+		color, emoji := getBinColor(collection.Service)
+		timeAlert := getTimeAlert(collection.Date)
+		result += fmt.Sprintf("📅 %s (%s)%s\n   %s %s (%s bin)\n\n", collection.Date, collection.Day, timeAlert, emoji, collection.Service, color)
 	}
 
 	return &mcp.CallToolResult{

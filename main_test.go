@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/mark3labs/mcp-go/mcp"
 )
@@ -70,7 +71,7 @@ func TestHandleBinCollection(t *testing.T) {
 				}`)),
 			},
 			expectError:    false,
-			expectedOutput: "Upcoming bin collections for UPRN 000000000:\n\n📅 05/02/2020 00:00:00 (Wednesday)\n   🗑️ Recycling Collection Service\n\n",
+			expectedOutput: "Upcoming bin collections for UPRN 000000000:\n\n📅 05/02/2020 00:00:00 (Wednesday)\n   🔴 Recycling Collection Service (red bin)\n\n",
 		},
 		{
 			name: "invalid uprn format",
@@ -144,7 +145,7 @@ func TestHandleBinCollection(t *testing.T) {
 				}`)),
 			},
 			expectError:    false,
-			expectedOutput: "Upcoming bin collections for UPRN 310045409:\n\n📅 05/02/2020 00:00:00 (Wednesday)\n   🗑️ Recycling Collection Service\n\n📅 12/02/2020 00:00:00 (Wednesday)\n   🗑️ Household Waste Collection Service\n\n",
+			expectedOutput: "Upcoming bin collections for UPRN 310045409:\n\n📅 05/02/2020 00:00:00 (Wednesday)\n   🔴 Recycling Collection Service (red bin)\n\n📅 12/02/2020 00:00:00 (Wednesday)\n   ⚫ Household Waste Collection Service (black bin)\n\n",
 		},
 		{
 			name: "successful response with no collections",
@@ -223,6 +224,73 @@ func TestHandleBinCollection(t *testing.T) {
 						t.Errorf("expected output %q, got %q", tt.expectedOutput, textContent.Text)
 					}
 				}
+			}
+		})
+	}
+}
+
+func TestGetTimeAlert(t *testing.T) {
+	// Test with a date that's today
+	today := time.Now()
+	todayStr := today.Format("02/01/2006 15:04:05")
+
+	tests := []struct {
+		name     string
+		date     string
+		hour     int
+		expected string
+	}{
+		{
+			name:     "early morning - no alert",
+			date:     todayStr,
+			hour:     6,
+			expected: "",
+		},
+		{
+			name:     "7AM - collection soon",
+			date:     todayStr,
+			hour:     7,
+			expected: " ⚠️ Collection is soon (around 9AM)!",
+		},
+		{
+			name:     "8AM - collection soon",
+			date:     todayStr,
+			hour:     8,
+			expected: " ⚠️ Collection is soon (around 9AM)!",
+		},
+		{
+			name:     "9AM - may have missed",
+			date:     todayStr,
+			hour:     9,
+			expected: " ⚠️ Collection may have already happened (around 9AM)!",
+		},
+		{
+			name:     "10AM - may have missed",
+			date:     todayStr,
+			hour:     10,
+			expected: " ⚠️ Collection may have already happened (around 9AM)!",
+		},
+		{
+			name:     "future date - no alert",
+			date:     "05/02/2025 00:00:00",
+			hour:     8,
+			expected: "",
+		},
+		{
+			name:     "past date - no alert",
+			date:     "05/02/2020 00:00:00",
+			hour:     8,
+			expected: "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockTime := time.Date(today.Year(), today.Month(), today.Day(), tt.hour, 0, 0, 0, time.Local)
+
+			result := getTimeAlertWithTime(tt.date, mockTime)
+			if result != tt.expected {
+				t.Errorf("expected %q, got %q", tt.expected, result)
 			}
 		})
 	}

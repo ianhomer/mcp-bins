@@ -124,6 +124,13 @@ To use this MCP server with Claude Desktop:
   - If no UPRN is provided, uses the default UPRN set at server startup
 - **Example**: `bin-collection uprn=000000000`
 - **Note**: This tool only reads collection schedules and cannot modify or update bin collection dates
+- **Color Coding**:
+  - ⚫ Black bin: Household/Domestic waste (general rubbish)
+  - 🔴 Red bin: Recycling
+  - 🟢 Green bin: Garden waste
+- **Time Alerts**:
+  - If it's 7AM-9AM on collection day: "⚠️ Collection is soon (around 9AM)!"
+  - If it's after 9AM on collection day: "⚠️ Collection may have already happened (around 9AM)!"
 
 ## Dependencies
 

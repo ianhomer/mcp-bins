@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(go build:*)",
+      "Bash(go test:*)",
+      "Bash(mkdir:*)",
+      "Bash(go vet:*)",
+      "Bash(gofmt:*)",
+      "Bash(.git/hooks/pre-commit)",
+      "Bash(pre-commit:*)"
+    ],
+    "deny": []
+  }
+}

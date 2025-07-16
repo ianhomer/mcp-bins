@@ -100,7 +100,7 @@ To use this MCP server with Claude Desktop:
      "mcpServers": {
        "mcp-bins": {
          "command": "/path/to/your/project/mcp-bins",
-         "args": ["-uprn", "310045409"]
+         "args": ["-uprn", "000000000"]
        }
      }
    }
